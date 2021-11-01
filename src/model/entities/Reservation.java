@@ -51,9 +51,20 @@ public class Reservation {
 
     // esse método que vai ser responsável por atualizar as datas, então por isso
     // que eu apaguei o setCheckIn e o setCheckOut
-    public void updateDates(Date checkIn, Date checkOut) {
+    public String updateDates(Date checkIn, Date checkOut) {
+        Date now = new Date();
+        if (checkIn.before(now) || checkOut.before(now)) {
+           return "Reservation dates for update must be future";
+        }
+        if (!checkOut.after(checkIn)) {
+            return "Check-out date must be after check-in date";
+        }
+
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+
+        // o critério para falar que a minha operação não deu nenhum erro é ele retornar null
+        return null;
     }
 
     // o toString também é uma sobreposição. Então agora sempre vamos colocar o
