@@ -1,5 +1,8 @@
 package model.entities;
 
+import model.exceptions.DomainException;
+
+import javax.swing.undo.UndoManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +21,12 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+    public Reservation(Integer roomNumber, Date checkIn, Date checkOut) throws DomainException {
+
+        if (!checkOut.after(checkIn)) {
+            throw new DomainException("Check-out date must be after check-in date");
+        }
+
         this.roomNumber = roomNumber;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
@@ -51,20 +59,18 @@ public class Reservation {
 
     // esse método que vai ser responsável por atualizar as datas, então por isso
     // que eu apaguei o setCheckIn e o setCheckOut
-    public String updateDates(Date checkIn, Date checkOut) {
+    public void updateDates(Date checkIn, Date checkOut) throws DomainException { // adicionando o throws DomainException, agora o meu método updateDates pode lançar uma exceção
         Date now = new Date();
         if (checkIn.before(now) || checkOut.before(now)) {
-           return "Reservation dates for update must be future";
+            // o meu método updateDates, lança exceção. Quem tem que tratar a exceção é o meu programa principal no bloco catch
+            throw new DomainException("Reservation dates for update must be future");
         }
         if (!checkOut.after(checkIn)) {
-            return "Check-out date must be after check-in date";
+            throw new DomainException("Check-out date must be after check-in date");
         }
 
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-
-        // o critério para falar que a minha operação não deu nenhum erro é ele retornar null
-        return null;
     }
 
     // o toString também é uma sobreposição. Então agora sempre vamos colocar o
